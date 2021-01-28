@@ -1,0 +1,55 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPLICATION_NAME}
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}-sa
+
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: ${APPLICATION_NAME}
+  spec:
+    containers:
+      - args:
+          - '--dockerfile=/tmp/app/Dockerfile'
+          - '--context=dir://tmp/app'
+          - '--destination=docker-registry.default.svc:5000/kaniko-test/example'
+          - '--skip-tls-verify'
+        image: 'gcr.io/kaniko-project/executor:latest'
+        name: ${APPLICATION_NAME}
+        volumeMounts:
+          - mountPath: /tmp/app
+            name: app-volume
+          - mountPath: /kaniko/.docker
+            name: docker-config-secret-volume
+          - mountPath: /root/.docker
+            name: docker-config-secret-volume
+    restartPolicy: Never
+    serviceAccount: builder
+    volumes:
+      - name: app-volume
+        persistentVolumeClaim:
+          claimName: app-volume-claim
+      - name: docker-config-secret-volume
+        secret:
+          items:
+              - key: .dockercfg
+                path: config.json
+          secretName: ${BUILDER_SECRET}
+
+parameters:
+- description: The name for the application.
+  name: APPLICATION_NAME
+  required: true
+  value: kaniko
+- description: Builder secret name.
+  name: BUILDER_SECRET
+  required: true
+  value: "secret"

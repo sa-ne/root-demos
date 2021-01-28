@@ -1,0 +1,21 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      serviceAccountName: basket-sa
+      containers:
+        - name: container 
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: dev
+          volumeMounts:
+            - mountPath: /config
+              name: basket-config-vol      
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: basket-config
+        name: basket-config-vol                                     

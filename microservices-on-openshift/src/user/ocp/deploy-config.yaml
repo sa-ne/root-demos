@@ -1,0 +1,190 @@
+kind: Template
+apiVersion: v1
+objects:
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      labels:
+        app: ${APP_LABEL}
+      name: ${RESOURCE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        app: ${RESOURCE_NAME}
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 300
+          maxSurge: 1
+          maxUnavailable: 0
+      template:
+        metadata:
+          labels:
+            app: ${RESOURCE_NAME}
+        spec:
+          containers:
+          - env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONTAINER_CORE_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
+            - name: CONTAINER_MAX_MEMORY
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+            - name: ACTIVEMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pricing-amq
+                  key: username
+            - name: ACTIVEMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pricing-amq
+                  key: password
+            - name: SPRING_BOOT_ADMIN_UI_URL
+              value: ${SPRING_BOOT_ADMIN_UI_URL}
+            - name: SPRING_BOOT_ADMIN_UI_USERNAME
+              value: ${SPRING_BOOT_ADMIN_UI_USERNAME}
+            - name: SPRING_BOOT_ADMIN_UI_PASSWORD
+              value: ${SPRING_BOOT_ADMIN_UI_PASSWORD}
+            - name: IMAGE
+              value: ${IMAGE}
+            - name: IMAGE_VERSION
+              value: ${IMAGE_VERSION}
+            - name: SPRING_PROFILES_ACTIVE
+              value: ${SPRING_PROFILES_ACTIVE}
+            - name: ENTERPRISE_JDBC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: product-profile-service
+                  key: enterprise-jdbcurl
+            - name: ENTERPRISE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: product-profile-service
+                  key: enterprise-user
+            - name: ENTERPRISE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: product-profile-service
+                  key: enterprise-password
+            - name: EVENTDB_JDBC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: product-profile-service
+                  key: eventdb-jdbc-url
+            - name: EVENTDB_JPA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: product-profile-service
+                  key: eventdb-user
+            - name: EVENTDB_JPA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: product-profile-service
+                  key: eventdb-password
+            - name: SQS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: pricing-sqs
+                  key: endpoint
+            - name: SQS_QUEUE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: pricing-sqs
+                  key: queue-name
+            - name: SQS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: pricing-sqs
+                  key: access-key-id
+            - name: SQS_ACCESS_KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pricing-sqs
+                  key: access-key-secret
+            - name: TZ
+              value: Europe/London
+            image: ${IMAGE}:${IMAGE_VERSION}
+            imagePullPolicy: Always
+            name: ${RESOURCE_NAME}
+            livenessProbe:
+              httpGet:
+                path: ${LIVENESS_PATH}
+                port: 10000
+              initialDelaySeconds: 60
+              periodSeconds: 30
+              timeoutSeconds: 1
+              successThreshold: 1
+              failureThreshold: 3
+            readinessProbe:
+              httpGet:
+                path: ${READINESS_PATH}
+                port: 10000
+              initialDelaySeconds: 60
+              periodSeconds: 5
+              timeoutSeconds: 1
+              successThreshold: 1
+              failureThreshold: 10
+            resources:
+              requests:
+                memory: 256Mi
+              limits:
+                memory: 1536Mi
+          restartPolicy: Always
+      triggers: []
+parameters:
+  - name: RESOURCE_NAME
+    displayName: Resource Name
+    description: The name of the deployment configuration resource that also matches other resources.
+    required: true
+  - name: APP_LABEL
+    displayName: Application Label
+    description: Name of the application label that should be used in all resources.
+    required: true
+  - name: IMAGE
+    displayName: Image Reference
+    description: Complete reference to an image in external Docker Registry.
+    required: true
+  - name: IMAGE_VERSION
+    displayName: Image Version
+    description: Version of specific image to pull from external Docker registry.
+    required: true
+  - name: LIVENESS_PATH
+    displayName: Liveness Probe Path
+    description: Path to use in HTTP Get for the liveness probe.
+    value: /health
+    required: false
+  - name: READINESS_PATH
+    displayName: Readiness Probe Path
+    description: Path to use in HTTP Get for the readiness probe.
+    value: /info
+    required: false
+  - name: SPRING_BOOT_ADMIN_UI_URL
+    displayName: Spring Boot Admin UI URL
+    description: Complete URL for Spring Boot Admin UI dashboard
+    value: 'http://spring-boot-admin-ui.devops:10000/'
+    required: false
+  - name: SPRING_BOOT_ADMIN_UI_USERNAME
+    displayName: Spring Boot Admin UI username
+    description: Username for Spring Boot Admin client to connect to Spring Boot Admin
+    generate: expression
+    from: 'user[A-Z0-9]{3}'
+    required: false
+  - name: SPRING_BOOT_ADMIN_UI_PASSWORD
+    displayName: Spring Boot Admin UI password
+    description: Password for Spring Boot Admin client to connect to Spring Boot Admin
+    generate: expression
+    from: '[a-zA-Z0-9]{16}'
+    required: false
+  - name: SPRING_PROFILES_ACTIVE
+    displayName: Spring Profiles Active
+    description: The active Spring profile(s)
+    required: false

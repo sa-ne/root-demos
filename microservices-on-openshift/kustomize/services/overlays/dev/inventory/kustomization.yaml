@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../base
+patchesStrategicMerge:
+- deployment-patch.yaml
+namePrefix: inventory-
+commonLabels:
+  service: inventory
+
+configMapGenerator:
+- files:
+  - config.properties
+  name: inventory-config
+
+images:
+- name: image
+  newName: nexus3-docker-cicd.apps.ocp4.datr.eu/repository/docker/amazin-dev/inventory
+  newTag: latest
+
+replicas:
+- name: inventory-deployment
+  count: 1    
+
+patchesJson6902:
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: inventory-deployment
+  path: deployment-json-patches.yaml
+- target:
+    group: networking.k8s.io
+    version: v1beta1
+    kind: Ingress
+    name: inventory-ingress
+  path: ingress-json-patches.yaml
+- target:
+    group:
+    version: v1
+    kind: Service
+    name: inventory-service
+  path: service-json-patches.yaml  

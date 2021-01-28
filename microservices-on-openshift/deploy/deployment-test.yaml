@@ -1,0 +1,19 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: user-deployment
+spec:
+  selector:
+    matchLabels:
+      app: user
+  replicas: 1 # Update the replicas from 2 to 4
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+      - name: user-test
+        image: nexus3-docker-cicd.apps.ocp4.datr.eu/repository/docker/amazin-dev/user:cbc06c6
+        ports:
+        - containerPort: 8080

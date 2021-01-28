@@ -1,0 +1,10 @@
+apiVersion: capabilities.3scale.net/v1alpha1
+kind: Binding
+metadata:
+  name: mytestingbinding
+spec:
+  credentialsRef:
+    name: ecorp4-tenant-secret
+  APISelector:
+    matchLabels:
+      environment: testing

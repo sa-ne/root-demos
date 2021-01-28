@@ -1,0 +1,84 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPLICATION_NAME}
+objects:
+
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    replicas: 1
+    selector:
+      app: ${APPLICATION_NAME}
+      deploymentconfig: ${APPLICATION_NAME}
+    strategy:
+      activeDeadlineSeconds: 21600
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+        labels:
+          app: ${APPLICATION_NAME}
+          deploymentconfig: ${APPLICATION_NAME}
+      spec:
+        containers:
+          - env: []
+            args: ["/bin/bash", "-c", "while true; do echo up; sleep 1; done"]
+            image: 'docker-registry.default.svc:5000/openshift/rhel7:latest'
+            imagePullPolicy: Always
+            name: ${APPLICATION_NAME}-loader
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            volumeMounts:
+            - mountPath: /tmp/app
+              name: app-volume
+            - mountPath: /root/.docker
+              name: docker-config-secret-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+          - name: app-volume
+            persistentVolumeClaim:
+              claimName: app-volume-claim
+          - name: docker-config-secret-volume
+            secret:
+              items:
+                - key: .dockercfg
+                  path: config.json
+              secretName: ${BUILDER_SECRET}
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: app-volume-claim
+  spec:
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Gi
+
+parameters:
+  - description: The name for the application.
+    name: APPLICATION_NAME
+    required: true
+    value: kaniko
+  - description: Builder secret name.
+    name: BUILDER_SECRET
+    required: true
+    value: "secret"

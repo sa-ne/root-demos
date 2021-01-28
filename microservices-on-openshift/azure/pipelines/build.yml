@@ -1,0 +1,78 @@
+# Required variables
+#
+# ocp-srv-con : which openshift cluster to connect to
+# ocp-project : which openshift project to deploy to
+# ocp-sa-template : path to serviceAccount template file
+# service-name : the name of the service/image/pod to be deployed
+# spring-active-profile : the spring.active.profile to use : dev, int, uat, prd etc
+# ocp-deploy-template : path to deployment template
+# reg-url : redistry url
+# image-tag : image registry tag
+# replicas : required number of pods
+
+
+trigger:
+- feature*
+
+stages:
+- stage: Build_Test_Containerise
+  jobs:
+
+  - job: Build_Test_Containerise
+    timeoutInMinutes: 10
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+    - template: ../config/build.yml
+    steps:
+
+    - script: curl -s https://nexus-cicd.apps.shared-rhpds.rhpds.openshift.opentlc.com/repository/maven-public > /dev/null
+      displayName: Ping Nexus
+
+    - task: Maven@3
+      displayName: Maven Test and Package
+      inputs:
+        options: '-U -B -q -s settings.xml -Dspring.profiles.active=dev'
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'package'
+
+    - task: Maven@3
+      displayName: Maven Deploy
+      inputs:
+        options: '-U -B -s settings.xml -DskipTests'
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: false
+        goals: 'deploy'
+
+    - task: Docker@2
+      displayName: Login to RedHat Container Repository
+      inputs:
+        command: login
+        containerRegistry: redhat-containers
+
+    - task: Docker@2
+      displayName: Login to Nexus Docker Repository
+      inputs:
+        command: login
+        containerRegistry: rhpds-nexus-docker
+
+    - task: Docker@2
+      displayName: Docker Image Build and Push
+      inputs:
+        command: buildAndPush
+        containerRegistry: rhpds-nexus-docker
+        repository: ${{ variables.service_name }}
+        tags: |
+          ${{ variables.tag1 }}
+          ${{ variables.tag1 }}
+          ${{ variables.tag1 }}

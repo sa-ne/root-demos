@@ -1,0 +1,136 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: microservices-on-openshift-git-repo
+spec:
+  type: git
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: https://github.com/justindav1s/microservices-on-openshift.git
+---
+# This demo modifies the cluster (deploys to it) you must use a service
+# account with permission to admin the cluster (or make your default user an admin
+# of the `default` namespace with default-cluster-admin.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: default-cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: check-checkout
+spec:
+  inputs:
+    resources:
+      - name: checkout-dir
+        type: git
+  steps:
+  - name : check-checkout-dir
+    image: "docker-registry.default.svc:5000/tekton-test/java-builder"
+    command: ["/bin/bash"]
+    workingDir: "/workspace/checkout-dir"
+    args: ["-c", "ls -ltr"]
+  - name : checkout-dir-contents
+    image: "docker-registry.default.svc:5000/tekton-test/java-builder"
+    command: ["/bin/bash"]
+    workingDir: "/workspace/checkout-dir"
+    args: ["-c", "find ."]
+#---
+#apiVersion: tekton.dev/v1alpha1
+#kind: Task
+#metadata:
+#  name: java-build
+#spec:
+#  inputs:
+#    resources:
+#      - name: checkout-dir
+#        type: git
+#  steps:
+#  - name: mvn-package
+#    image: docker-registry.default.svc:5000/tekton-test/java-builder
+#    workingDir: '/workspace/checkout-dir/src/inventory'
+#    command: ["/bin/bash"]
+#    args: ["-c", "mvn -B -U -q -s ../settings.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -DskipTests package "]
+#  - name: mvn-test
+#    image: docker-registry.default.svc:5000/tekton-test/java-builder
+#    workingDir: '/workspace/checkout-dir/src/inventory'
+#    command: ["/bin/bash"]
+#    args: ["-c", "mvn -B -U -q -s ../settings.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dspring.profiles.active=dev test "]
+#  - name: mvn-deploy
+#    image: docker-registry.default.svc:5000/tekton-test/java-builder
+#    workingDir: '/workspace/checkout-dir/src/inventory'
+#    command: ["/bin/bash"]
+#    args: ["-c", "mvn -B -U -q -s ../settings.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -DskipTests deploy"]
+#---
+#apiVersion: tekton.dev/v1alpha1
+#kind: Task
+#metadata:
+#  name: image-build
+#spec:
+#  inputs:
+#    resources:
+#      - name: checkout-dir
+#        type: git
+#  steps:
+#    - name: mvn-get-fat-jar
+#      image: docker-registry.default.svc:5000/tekton-test/java-builder
+#      workingDir: '/workspace/checkout-dir/src/inventory'
+#      command: ["/bin/bash"]
+#      args: ["-c", "mvn -B -U -q -s ../settings.xml -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -DskipTests package "]
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: demo-pipeline
+spec:
+  resources:
+  - name: source-repo
+    type: git
+tasks:
+  - name: check-checkout
+    taskRef:
+      name: check-checkout
+    resources:
+      inputs:
+      - name: checkout-dir
+        resource: source-repo
+#  - name: java-build
+#    taskRef:
+#      name: java-build
+#    runAfter:
+#    - check-checkout
+#    resources:
+#      inputs:
+#      - name: checkout-dir
+#        resource: source-repo
+#  - name: image-build
+#    taskRef:
+#      name: image-build
+#    runAfter:
+#      - java-build
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: demo-pipeline-run-1
+spec:
+  pipelineRef:
+    name: demo-pipeline
+  serviceAccount: 'default'
+  resources:
+    - name: source-repo
+      resourceRef:
+        name: microservices-on-openshift-git-repo

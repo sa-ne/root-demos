@@ -1,0 +1,48 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: service-prd-template
+objects:
+
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${SERVICEACCOUNT_NAME}
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${SERVICE_NAME}
+  spec:
+    ports:
+      - name: http
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+    selector:
+      app: ${APPLICATION_NAME}
+    sessionAffinity: None
+    type: ClusterIP
+      
+parameters:
+  - description: The name for the application.
+    name: APPLICATION_NAME
+    required: true
+    value: "basket"
+  - description: The name for the application.
+    name: SERVICE_NAME
+    required: true
+    value: "basket-prd"
+  - description: The ServiceAccount name.
+    name: SERVICEACCOUNT_NAME
+    required: true
+    value: "basket-prd-sa"
+
+
+

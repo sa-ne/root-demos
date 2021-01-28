@@ -1,0 +1,70 @@
+secure-cookie: false
+enable-logging: true
+enable-json-logging: false
+# is the url for retrieve the OpenID configuration - normally the <server>/auth/realm/<realm_name>
+discovery-url: https://sso-sso.apps.ocp.datr.eu/auth/realms/amazin
+# the client id for the 'client' application
+client-id: webapp
+# the secret associated to the 'client' application
+client-secret: 4067e61d-377b-4995-bdc9-d08381567cf5
+# the interface definition you wish the proxy to listen, all interfaces is specified as ':<port>', unix sockets as unix://<REL_PATH>|</ABS PATH>
+listen: :8081
+# a collection of resource i.e. urls that you wish to protect
+enable-default-deny: true
+# the url hosting the actual services
+#upstream-url:  https://api-gateway-amazin-dev.apps.ocp.datr.eu
+upstream-url: http://127.0.0.1:8080
+redirection-url: https://sso-gatekeeper-amazin-dev.apps.ocp.datr.eu
+#store-url: boltdb://./boltfile
+
+resources:
+
+- uri: /api/products/**
+  methods:
+    - GET
+    - POST
+  roles:
+    - webapp:ROLE_product
+  require-any-role: true
+
+- uri: /api/session
+  methods:
+    - GET
+    - POST
+  roles:
+    - webapp:ROLE_user
+
+- uri: /api/login
+  methods:
+    - GET
+    - POST
+  roles:
+    - webapp:ROLE_user
+
+- uri: /api/logout
+  methods:
+    - DELETE
+  roles:
+    - webapp:ROLE_user
+    -
+- uri: /api/basket/**
+  methods:
+    - GET
+    - POST
+  roles:
+    - webapp:ROLE_product
+    - webapp:ROLE_basket
+    - webapp:ROLE_user
+
+- uri: /
+  white-listed: true
+
+- uri: /health
+  white-listed: true
+
+- uri: /*
+  roles:
+    - webapp:ROLE_admin
+
+#- uri: /*
+#  white-listed: true

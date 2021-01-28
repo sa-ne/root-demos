@@ -1,0 +1,6 @@
+<ul class="nav navbar-nav">
+  <li *ngFor="let category of categories">
+    <button (click)=onClickCategory(category) type="button" class="btn btn-default navbar-btn">{{ category | titleCase}}</button>
+    &nbsp;
+  </li>
+</ul>

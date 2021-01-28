@@ -1,0 +1,8 @@
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: RbacConfig
+metadata:
+  name: default
+spec:
+  mode: 'OFF'
+  inclusion:
+    namespaces: ["amazin-prod"]

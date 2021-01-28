@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: jenkins-slave-builder
+metadata:
+  annotations:
+    description: Provide a convenient way to convert an image to a Jenkins slave image
+    iconClass: icon-jenkins
+    tags: instant-app,jenkins
+  name: jenkins-slave-builder
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      slave-directory: /home/jenkins
+      slave-label: ${SLAVE_LABEL}
+    labels:
+      build: jenkins-slave-custom
+      role: jenkins-slave
+    name: jenkins-slave-custom
+  spec: {}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      description: Modifies the ${IMAGE_NAME} to run as Jenkins slave
+    labels:
+      build: jenkins-slave-custom
+      name: ${SLAVE_LABEL}-slave
+    name: jenkins-slave-custom
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: jenkins-slave-custom:latest
+    resources: {}
+    source:
+      contextDir: ${SLAVE_REPO_CONTEXTDIR}
+      git:
+        ref: ${SLAVE_REPO_REF}
+        uri: ${SLAVE_REPO_URL}
+      sourceSecret:
+        name: ${GIT_SRC_SECRET}
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: ${IMAGE_NAME}
+      type: Docker
+    triggers:
+    - type: ConfigChange
+parameters:
+- description: The name of an image to convert to a Jenkins slave image.
+  displayName: Image Name
+  name: IMAGE_NAME
+  required: true
+  value: openshift3/jenkins-slave-base-rhel7:v3.6.173.0.49-5
+- description: Label for slave pods which are used by Jenkins to discover slave pods and assign jobs to them
+  displayName: Jenkins Slave Label
+  name: SLAVE_LABEL
+  required: true
+  value: jenkins-slave
+- description: Git repository with Dockerfile and slave entrypoint.
+  displayName: Repository URL
+  name: SLAVE_REPO_URL
+- description: The sub-directory inside the repository.
+  displayName: Context Directory
+  name: SLAVE_REPO_CONTEXTDIR
+  value: slave
+- description: The git ref or tag to use for customization.
+  displayName: Git Reference
+  name: SLAVE_REPO_REF
+  value: master
+- description: Git Source Secret
+  displayName: Source Secret
+  name: GIT_SRC_SECRET
+  value: bitbucket-ro

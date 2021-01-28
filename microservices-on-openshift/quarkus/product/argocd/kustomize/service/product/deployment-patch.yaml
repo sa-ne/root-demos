@@ -1,0 +1,21 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      serviceAccountName: product-sa
+      containers:
+        - name: container 
+          env:
+          - name: SOME_VAR2
+            value: SOME_VAL2
+          volumeMounts:
+            - mountPath: /deployments/config
+              name: product-config-vol      
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: product-config
+        name: product-config-vol                                     

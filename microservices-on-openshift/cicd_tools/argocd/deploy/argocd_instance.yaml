@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  applicationInstanceLabelKey: datr.eu/argo-of-argos
+  dex:
+    image: quay.io/dexidp/dex
+    openShiftOAuth: true
+    version: v2.22.0
+  rbac:
+    defaultPolicy: ''
+    policy: |
+      g, argocd-admins, role:admin
+      g, argocd-project1-admins, role:project1-admin
+      g, argocd-project1-ro, role:project1-ro
+      g, argocd-project2-admins, role:project2-admin
+      g, argocd-project2-ro, role:project2-ro        
+    scopes: '[groups]'    
+  server:
+    host: argocd-argocd.apps.ocp4.datr.eu
+    route: true 
+    insecure: false
+  initialRepositories: |
+    - url: git@github.com:justindav1s/argocd-resources.git
+      sshPrivateKeySecret:
+        name: github-secret
+        key: ssh-privatekey
+    - url: git@github.com:justindav1s/microservices-on-openshift.git
+      sshPrivateKeySecret:
+        name: github-secret
+        key: ssh-privatekey                

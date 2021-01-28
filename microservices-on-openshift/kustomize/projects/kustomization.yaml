@@ -1,0 +1,4 @@
+resources:
+- cicd  
+- amazin-dev
+- amazin-prod

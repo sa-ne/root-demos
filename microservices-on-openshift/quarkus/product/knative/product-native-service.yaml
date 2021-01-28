@@ -1,0 +1,42 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: product-config
+  namespace: amazin-serverless
+data:
+  application.properties: |
+    config.test.data.2=This is Config Data 2
+---
+apiVersion: serving.knative.dev/v1beta1
+kind: Service
+metadata:
+  name: product-native
+  namespace: amazin-serverless
+spec:
+  template:
+    metadata:
+      annotations:
+        client.knative.dev/user-image: 'quay.io/justindav1s/product-native:008ac05'
+    spec:
+      containerConcurrency: 1
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+            - name: TARGET
+              value: Knative
+          image: 'quay.io/justindav1s/product-native:008ac05'
+          name: user-container
+          resources: {}
+          volumeMounts:
+            - name: config-vol
+              mountPath: /work/config
+      timeoutSeconds: 300
+      volumes:
+        - name: config-vol
+          configMap:
+            name: product-config
+            defaultMode: 420
+  traffic:
+    - latestRevision: true
+      percent: 100

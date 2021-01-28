@@ -1,0 +1,1 @@
+mvn clean install spring-boot:run  -Dspring.profiles.active=kc -DskipTests

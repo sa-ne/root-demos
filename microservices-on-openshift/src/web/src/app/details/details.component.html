@@ -1,0 +1,8 @@
+<div *ngIf="product">
+  <div class="list-group">
+      <h1>{{product.name}}</h1>
+      <p><img class="img-responsive center-block" src="assets/{{product.name | lowercase}}.jpeg" alt="{{product.name | lowercase}} image"></p>
+      <p><h3 class="pull-left">£ {{product.price}}</h3>
+        <a class="btn btn-primary btn-lg pull-right" href="#" role="button" (click)="onAddToBasket(product)" >add to basket</a>
+  </div>
+</div>

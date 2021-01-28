@@ -1,0 +1,18 @@
+apiVersion: capabilities.3scale.net/v1alpha1
+kind: Tenant
+metadata:
+  name: ecorp4-tenant
+spec:
+  username: admin
+  systemMasterUrl: https://master.apps.ocp4.datr.eu
+  email: admin@ecorp.com
+  organizationName: ECorp
+  masterCredentialsRef:
+    name: system-seed
+  passwordCredentialsRef:
+    name: ecorp-admin-secret
+  tenantSecretRef:
+    name: ecorp4-tenant-secret
+    namespace: 3scale-tenant
+
+
