@@ -1,0 +1,43 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: imagestream-template
+objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/display-name: Grafeas
+    name: grafeas
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        description: Provides Grafeas v1
+        openshift.io/display-name: Grafeas v1
+        openshift.io/provider-display-name: Justin Davis, Inc.
+        tags: grafeas
+        version: "v1"
+      from:
+        kind: DockerImage
+        name: 005459661421.dkr.ecr.eu-west-1.amazonaws.com/dev/grafeas:v1
+      importPolicy: {}
+      name: "v1"
+      referencePolicy:
+        type: Local
+    - annotations:
+        description: Provides a Grafeas (latest)
+        openshift.io/display-name: Grapheas (Latest)
+        openshift.io/provider-display-name: Justin, Inc.
+        tags: grafeas
+      from:
+        kind: DockerImage
+        name: 005459661421.dkr.ecr.eu-west-1.amazonaws.com/dev/grafeas:latest
+      generation: 1
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: Local
+

@@ -1,0 +1,12 @@
+apiVersion: authentication.istio.io/v1alpha1
+kind: Policy
+metadata:
+  name: jwt-policy
+spec:
+  targets:
+  - name: api-gateway-prd
+  origins:
+  - jwt:
+      issuer: "https://sso-sso.apps.ocp4.datr.eu/auth/realms/amazin"
+      jwksUri: "https://sso-sso.apps.ocp4.datr.eu/auth/realms/amazin/protocol/openid-connect/certs"
+  principalBinding: USE_ORIGIN

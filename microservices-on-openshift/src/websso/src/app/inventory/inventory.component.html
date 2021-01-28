@@ -1,0 +1,14 @@
+<!-- <div *ngIf="products"> -->
+  <div class="row">
+        <div class="list-group">
+          <div class="media">
+            <a href="#" (click)="onClickProduct(product)" *ngFor="let product of products" class="list-group-item">
+              <div class="media-left media-middle">
+                <img src="assets/{{product.name | lowercase}}.jpeg" class="media-object" height="42" width="42">
+              </div>
+              <div class="media-body media-middle">{{product.name | titlecase}}</div>
+            </a>
+          </div>
+      </div>
+  </div>
+<!-- </div> -->

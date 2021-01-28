@@ -1,0 +1,43 @@
+.DS_Store
+# Compiled class file
+*.class
+*.iml
+.idea/
+# Log file
+*.log
+target/
+# BlueJ files
+*.ctxt
+*.gz
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+dist/
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+**/target/
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+/src/inventory/out.log.2018-03-31.0.gz
+.settings
+.classpath
+.project
+**/node_modules
+.vscode
+/**/credentials
+/cicd_tools/hygieia/api/api.jar
+/twistlock/lic.sh
+/istio/install/gihub.key
+/cicd_tools/kaniko/Dockerfile
+/src/web/node_modules/
+/src/web_sso/node_modules/
+/src/web_sso/dist/
+/src/websso/dist/
+/src/websso/node_modules/
+
+**/*@tmp/
+*.bak

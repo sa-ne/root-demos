@@ -1,0 +1,93 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: jenkins-base-build
+
+metadata:
+  annotations:
+    description: Jenkins Base Build
+    iconClass: icon-jenkins
+    openshift.io/display-name: Jenkins Base Build
+    openshift.io/documentation-url: https://bitbucket.org/motabilityoperations/jenkins-s2i/src/master
+    openshift.io/long-description: This template defines resources needed to configure a Jenkins base image to MO standards
+    openshift.io/provider-display-name: MODevops
+    openshift.io/support-url: https://mocloud.atlassian.net/
+    tags: quickstart,mo,jenkins
+  name: jenkins-base-build
+objects:
+
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    annotations:
+      description: BitBucket secret to clone the repo
+    name: bitbucket
+    labels:
+      app: jenkins-build-tools
+  stringData:
+      username: ${BB_USER}
+      password: ${BB_PASS}
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: jenkins-build-tools
+    annotations:
+      description: Defines how to build the application
+    name: ${NAME}
+  spec:
+    output:
+      pushSecret:
+        name: ${REG_SECRET}
+      to:
+        kind: DockerImage
+        name: ${REG_HOST}/mo-base/${NAME}:${VERSION}
+    source:
+      git:
+        uri: ${SOURCE_REPOSITORY_URL}
+        ref: master
+      sourceSecret:
+        name: bitbucket
+      type: Git
+      contextDir: "${DOCKERFILE_PATH}"
+    strategy:
+      dockerStrategy:
+        dockerfilePath: "."
+      type: Docker
+    triggers:
+    - type: ConfigChange
+
+parameters:
+- description: The name assigned to all of the frontend objects defined in this template.
+  displayName: Name
+  name: NAME
+  required: true
+- description: image version.
+  displayName: image version
+  name: VERSION
+  required: true
+- description: The URL of the repository with your application source code.
+  displayName: BitBucket Repository URL
+  name: SOURCE_REPOSITORY_URL
+  required: true
+- description: Path to Dockerfile in repo.
+  displayName: Dockerfile Path
+  name: DOCKERFILE_PATH
+  required: true
+- description: Your BitBucket username
+  displayName: BitBucket Username
+  name: BB_USER
+  required: true
+- description: Your BitBucket password
+  displayName: BitBucket Password
+  name: BB_PASS
+  required: true
+- description: Host and port where Registry is located
+  displayName: Registry Host
+  name: REG_HOST
+  required: true
+- description: OCP Secret name to authenticate with Registry
+  displayName: OCP Secret for Registry Host
+  name: REG_SECRET
+  required: true

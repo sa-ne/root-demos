@@ -1,0 +1,28 @@
+<p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <nav class="navbar navbar-default">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">{{title}}</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <app-categories (productList)="onNewProductList($event)"></app-categories>
+          <app-login (loggedInUser)="onNewLogin($event)"></app-login>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-2">
+      <app-inventory [products]="products" (selectedProduct)="onNewSelectedProduct($event)"></app-inventory>
+    </div>
+    <div class="col-md-4">
+      <app-details [product]="product" (updatedBasket)="onUpdatedBasket($event)"></app-details>
+    </div>
+    <div class="col-md-4">
+      <app-basket [user]="user" [basket]="basket" (updatedBasket)="onUpdatedBasket($event)"></app-basket>
+    </div>
+  </div>
+</div><!-- /.container-fluid -->

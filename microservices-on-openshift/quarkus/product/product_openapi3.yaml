@@ -1,0 +1,132 @@
+---
+openapi: 3.0.1
+info:
+  title: Product API
+  contact:
+    name: Product API Support
+    url: http://amazin.com/contact
+    email: techsupport@amazin.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+tags:
+- name: app
+  description: product
+- name: architecture
+  description: quarkus
+paths:
+  /config/1:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /config/2:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /products:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /products/all:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /products/health:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /products/type/{type}:
+    get:
+      parameters:
+      - name: type
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /products/types:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /products/{productId}:
+    get:
+      parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+components:
+  schemas:
+    ProductType:
+      enum:
+      - CLOTHES
+      - FOOD
+      - GADGETS
+      type: string
+    Product:
+      type: object
+      properties:
+        basketIndex:
+          format: int32
+          type: integer
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          format: float
+          type: number
+        type:
+          $ref: '#/components/schemas/ProductType'

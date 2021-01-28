@@ -1,0 +1,21 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: deployment
+spec:
+  template:
+    spec:
+      serviceAccountName: inventory-sa
+      containers:
+        - name: container 
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: dev
+          volumeMounts:
+            - mountPath: /config
+              name: inventory-config-vol      
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: inventory-config
+        name: inventory-config-vol                                     

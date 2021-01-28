@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: api-gateway.build.test
+  main:
+    allow-bean-definition-overriding: true
+
+
+server:
+  port: 8081
+
+basket:
+  host: basket-amazin-dev.apps.ocp.datr.eu
+
+inventory:
+  host: inventory-amazin-dev.apps.ocp.datr.eu
+
+user:
+  host: user-amazin-dev.apps.ocp.datr.eu
+
+keycloak:
+  enabled: true
+  auth-server-url: http://127.0.0.1:8080/auth
+  resource: webapp
+  realm: amazin
+  credentials.secret: cc48f8ad-80d3-4019-8d36-7dfb6f5c86e7
+  use-resource-role-mappings: true
+  principal-attribute: preferred_username

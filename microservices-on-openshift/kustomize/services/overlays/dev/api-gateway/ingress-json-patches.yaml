@@ -1,0 +1,11 @@
+- op: replace
+  path: /spec/tls/0/hosts/0
+  value: api-gateway-amazin-dev.apps-crc.testing
+
+- op: replace
+  path: /spec/rules/0/host
+  value: api-gateway-amazin-dev.apps-crc.testing
+
+- op: replace
+  path: /spec/rules/0/http/paths/0/backend/serviceName
+  value: api-gateway

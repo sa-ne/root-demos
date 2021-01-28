@@ -1,0 +1,21 @@
+#!/bin/bash -e
+#
+# S2I run script
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+echo "--- # Starting Spring Boot application"
+echo "--> # JAVA_OPTS = $JAVA_OPTS"
+echo "--> # WORKING DIR : `pwd`"
+echo "--- # Running application from jar ($(find . -name *.war)) ..."
+echo "--> # ENVIRONMENT_NAME : ${ENVIRONMENT_NAME}"
+
+WAR_NAME=`find . -name *.war`
+echo "--> # WAR_NAME : $WAR_NAME"
+
+java $JAVA_OPTS -jar  $WAR_NAME \
+    --spring.profiles.active=${ENVIRONMENT_NAME} \
+    --spring.config.location=file:/app/config/${APPLICATION_NAME}-${ENVIRONMENT_NAME}.properties

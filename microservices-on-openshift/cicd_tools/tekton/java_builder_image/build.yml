@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: java-builder-build
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      build: java-builder
+      app: java-builder
+    name: java-builder
+  spec:
+    failedBuildsHistoryLimit: 5
+    output:
+      to:
+        kind: ImageStreamTag
+        name: java-builder:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: https://github.com/justindav1s/microservices-on-openshift.git
+        ref: master
+    strategy:
+      dockerStrategy:
+        dockerfilePath: cicd_tools/tekton/java_builder_image/Dockerfile
+      type: Source
+    successfulBuildsHistoryLimit: 5
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: java-builder
+    name: java-builder

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  name: inv_test
+  annotations:
+    openshift.io/display-name: inv_test
+spec:
+  tags:
+  - name: 'latest'
+    from:
+      kind: DockerImage
+      name: 'quay-enterprise-quay-enterprise.apps.ocp.datr.eu/amazin-dev/inventory:latest'

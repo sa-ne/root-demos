@@ -1,0 +1,51 @@
+<div *ngIf="user">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="navbar-brand">Basket # {{basket.id}}</div>
+        </div>
+        <div class="col-md-6">
+          <div class="navbar-brand">Total £ {{basket.total}}</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="list-group">
+    <div class="list-group-item">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-4">
+            <h4>Item</h4>
+          </div>
+          <div class="col-md-3">
+            <h4>Price</h4>
+          </div>
+          <div class="col-md-3">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngFor="let product of basket.products" class="list-group-item">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-2">
+            <img src="assets/{{product.name | lowercase}}.jpeg" height="32" width="32">
+          </div>
+          <div class="col-md-4">
+            {{product.name | titlecase}}
+          </div>
+          <div class="col-md-4">
+            £ {{ product.price }}
+          </div>
+          <div class="col-md-2">
+            <a href="#" (click)="onClickRemoveProduct(product)" class="btn btn-primary">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

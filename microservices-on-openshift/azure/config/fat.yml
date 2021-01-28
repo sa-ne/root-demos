@@ -1,0 +1,10 @@
+variables:
+  service_name: inventory
+  image_tag: fat-latest
+  spring_active_profile: dev
+  ocp_deploy_template: openshift/deploy-template.yaml
+  ocp_project: amazin-fat
+  ocp_sa_template: openshift/sa-template.yaml
+  ocp_srv_con: rhpds-ocp4
+  reg_url: dockerreg-cicd.apps.shared-rhpds.rhpds.openshift.opentlc.com
+  replicas: 3

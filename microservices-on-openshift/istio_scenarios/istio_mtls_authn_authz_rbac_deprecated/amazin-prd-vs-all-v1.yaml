@@ -1,0 +1,53 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: inventory
+spec:
+  hosts:
+  - inventory-prd
+  http:
+  - route:
+    - destination:
+        host: inventory-prd
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: api-gateway
+spec:
+  hosts:
+  - api-gateway-prd
+  http:
+  - route:
+    - destination:
+        host: api-gateway-prd
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user
+spec:
+  hosts:
+  - user-prd
+  http:
+  - route:
+    - destination:
+        host: user-prd
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: basket
+spec:
+  hosts:
+  - basket-prd
+  http:
+  - route:
+    - destination:
+        host: basket-prd
+        subset: v1
+---

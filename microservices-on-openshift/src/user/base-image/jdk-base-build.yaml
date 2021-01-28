@@ -1,0 +1,62 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: jd-base-jdk
+metadata:
+  annotations:
+    description: custom jdk image
+    tags: quickstart,jd,ssl-spike,ssl-spike
+  name: jd-base-jdk
+objects:
+
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    name: ${NAME}
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}:${VERSION}
+    source:
+      git:
+        uri: ${SOURCE_REPOSITORY_URL}
+        ref: master
+      type: Git
+    strategy:
+      dockerStrategy:
+        dockerfilePath: ${DOCKERFILE_PATH}/Dockerfile
+        env:
+        - name: "DOCKERFILE_PATH"
+          value: "${DOCKERFILE_PATH}"
+      type: Docker
+    triggers:
+    - type: ConfigChange
+
+parameters:
+- description: The name assigned to all of the frontend objects defined in this template.
+  displayName: Name
+  name: NAME
+  required: true
+  value: jd-openjdk18-openshift
+- description: image version.
+  displayName: image version
+  name: VERSION
+  required: true
+- description: The URL of the repository with your application source code.
+  displayName: BitBucket Repository URL
+  name: SOURCE_REPOSITORY_URL
+  required: true
+  value: https://github.com/justindav1s/microservices-on-openshift.git
+- name: DOCKERFILE_PATH
+  displayName: Dockerfile path
+  description: Path within Git Repo wehere Dockerfile can be found.
+  value: ""
+  required: true

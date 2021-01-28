@@ -1,0 +1,19 @@
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: user-prd-all-role
+spec:
+  rules:
+  - services: ["user-prd.amazin-prod.svc.cluster.local"]
+    methods: ["GET", "POST", "PUT", "DELETE"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: bind-user-prd-all-role
+spec:
+  subjects:
+  - user: "cluster.local/ns/amazin-prod/sa/api-gateway-prd-sa"
+  roleRef:
+    kind: ServiceRole
+    name: "user-prd-all-role"

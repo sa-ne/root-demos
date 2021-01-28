@@ -1,0 +1,5 @@
+variables:
+  service_name: inventory
+  tag1: fat-latest
+  tag2: latest
+  tag3: 0.0.1-SNAPSHOT

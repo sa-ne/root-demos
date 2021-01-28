@@ -1,0 +1,24 @@
+kind: Template
+apiVersion: v1
+objects:
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      labels:
+        app: ${APP_LABEL}
+      name: ${RESOURCE_NAME}
+    spec:
+      port:
+        targetPort: 10000
+      to:
+        kind: Service
+        name: ${RESOURCE_NAME}
+parameters:
+  - name: RESOURCE_NAME
+    displayName: Resource Name
+    description: The name of the route resource that also matches service resource.
+    required: true
+  - name: APP_LABEL
+    displayName: Application Label
+    description: Name of the application label that should be used in all resources.
+    required: true
