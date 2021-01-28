@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:cs="http://service.employee.com/types/v1"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://service.employee.com/v1"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="employee-service" targetNamespace="http://service.employee.com/v1">
+    <wsdl:types>
+        <xsd:schema>
+            <xsd:import namespace="http://service.employee.com/types/v1" schemaLocation="employee-service.xsd" />
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="createEmployeeRequest">
+        <wsdl:part name="createEmployeeRequest" element="cs:createEmployeeRequest" />
+    </wsdl:message>
+    <wsdl:message name="createEmployeeResponse">
+        <wsdl:part name="createEmployeeResponse" element="cs:createEmployeeResponse" />
+    </wsdl:message>
+    <wsdl:message name="createEmployeeFault">
+        <wsdl:part name="createEmployeeFault" element="cs:createEmployeeFault" />
+    </wsdl:message>
+    <wsdl:portType name="EmployeeServicePort">
+        <wsdl:operation name="createEmployee">
+            <wsdl:input message="tns:createEmployeeRequest" name="createEmployeeRequest" />
+            <wsdl:output message="tns:createEmployeeResponse" name="createEmployeeResponse" />
+            <wsdl:fault message="tns:createEmployeeFault" name="createEmployeeFault" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EmployeeServiceBinding" type="tns:EmployeeServicePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="createEmployee">
+            <soap:operation soapAction="createEmployee" style="document" />
+            <wsdl:input name="createEmployeeRequest">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="createEmployeeResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+            <wsdl:fault name="createEmployeeFault">
+                <soap:fault name="createEmployeeFault" use="literal" />
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EmployeeService">
+        <wsdl:port name="EmployeeServicePort" binding="tns:EmployeeServiceBinding">
+            <soap:address location="http://0.0.0.0:8181/cxf/employeeservice/v1" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

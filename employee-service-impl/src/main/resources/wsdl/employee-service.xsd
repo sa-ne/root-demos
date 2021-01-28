@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://service.employee.com/types/v1"
+    xmlns:tns="http://service.employee.com/types/v1" elementFormDefault="qualified">
+    <xs:element name="createEmployeeRequest" type="tns:CreateEmployeeRequest" />
+    <xs:element name="createEmployeeResponse" type="tns:CreateEmployeeResponse" />
+    <xs:element name="createEmployeeFault" type="tns:CreateEmployeeFault" />
+    <xs:complexType name="CreateEmployeeRequest">
+        <xs:sequence>
+            <xs:element name="employeeName">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="50" />
+                        <xs:whiteSpace value="collapse" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="employeeAge">
+                <xs:simpleType>
+                    <xs:restriction base="xs:integer" />
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="employeeCity">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="50" />
+                        <xs:whiteSpace value="collapse" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="employeePhoneNumber">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="10" />
+                        <xs:whiteSpace value="collapse" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CreateEmployeeResponse">
+        <xs:sequence>
+            <xs:element name="employeeID" type="xs:integer" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CreateEmployeeFault">
+        <xs:sequence>
+            <xs:element name="errorMessage" type="xs:normalizedString" />
+            <xs:element name="errorCode" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
