@@ -15,12 +15,11 @@ import com.employee.service.types.v1.CreateEmployeeResponse;
 public class EmployeeResponseProcessor implements Processor {
 
 	 private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeResponseProcessor.class);
-	 private static long counter = 1;
+	 private static long counter = 0;
 	 private static Map < Long, CreateEmployeeRequest > employees = new HashMap();
 	 
 	@Override
 	public void process(Exchange exchange) throws Exception {
-		
 		  CreateEmployeeRequest request = exchange.getIn().getBody(CreateEmployeeRequest.class);
 		  employees.put(counter, request);
 		  synchronized(this) {
@@ -30,7 +29,7 @@ public class EmployeeResponseProcessor implements Processor {
 		  CreateEmployeeResponse response = new CreateEmployeeResponse();
 		  response.setEmployeeID(BigInteger.valueOf(counter));
 		 
-		  LOGGER.debug("Employee stored in map ID: " + counter);
+		  LOGGER.debug("===============   Employee stored in map ID: " + counter);
 		 
 		  exchange.getOut().setBody(response);
 

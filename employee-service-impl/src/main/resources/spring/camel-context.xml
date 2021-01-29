@@ -15,6 +15,7 @@
             <from id="_from1" uri="cxf:bean:employeeServiceCXF?dataFormat=PAYLOAD"/>
             <unmarshal id="_unmarshal1" ref="employeeJaxb"/>
             <process id="_process1" ref="employeeResponseProcessor"/>
+            <marshal ref="employeeJaxb"/>
         </route>
     </camelContext>
     <bean
