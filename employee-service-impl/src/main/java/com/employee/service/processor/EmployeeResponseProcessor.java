@@ -31,7 +31,7 @@ public class EmployeeResponseProcessor implements Processor {
 		 
 		  LOGGER.debug("===============   Employee stored in map ID: " + counter);
 		 
-		  exchange.getOut().setBody(response);
+		  exchange.getIn().setBody(response);
 
 	}
 
