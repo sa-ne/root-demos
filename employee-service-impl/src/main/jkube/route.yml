@@ -1,0 +1,12 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: employee-service-impl-app
+spec:
+  path: /employeeservice
+  port:
+    targetPort: 8082
+  to:
+    kind: Service
+    name: employee-service-impl
+

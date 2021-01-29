@@ -1,0 +1,11 @@
+ spec:
+   ports:
+   - name: app
+     port: 8082
+     protocol: TCP
+     targetPort: 8082
+   - name: http
+     port: 8080
+     protocol: TCP
+     targetPort: 8080     
+    

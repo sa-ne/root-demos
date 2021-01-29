@@ -43,7 +43,7 @@
     </wsdl:binding>
     <wsdl:service name="EmployeeService">
         <wsdl:port name="EmployeeServicePort" binding="tns:EmployeeServiceBinding">
-            <soap:address location="http://0.0.0.0:8080/employeeservice"/>
+            <soap:address location="http://0.0.0.0:8181/cxf/employeeservice/v1" />
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

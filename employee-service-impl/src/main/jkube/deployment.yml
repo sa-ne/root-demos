@@ -3,6 +3,10 @@ spec:
     spec:
       containers:
         - 
+          ports:
+            - name: app
+              containerPort: 8082
+              protocol: TCP
           resources:
             requests:
               cpu: "0.2"
