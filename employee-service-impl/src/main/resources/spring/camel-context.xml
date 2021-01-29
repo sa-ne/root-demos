@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:cxf="http://camel.apache.org/schema/cxf"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       https://camel.apache.org/schema/spring/camel-spring.xsd http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
-    <cxf:cxfEndpoint address="http://localhost:8080/employeeservice"
+    <cxf:cxfEndpoint address="http://0.0.0.0:8082/employeeservice"
         endpointName="cs:EmployeeServicePort"
         id="cxfEndpoint-2dca9419-419a-426b-8d59-1825bc0372b1"
         name="employeeServiceCXF" serviceName="cs:EmployeeService"
@@ -12,9 +12,9 @@
             <jaxb contextPath="com.employee.service.types.v1" id="employeeJaxb"/>
         </dataFormats>
         <route id="employee-service-main-route">
-            <from uri="cxf:bean:employeeServiceCXF?dataFormat=PAYLOAD"/>
-            <unmarshal ref="employeeJaxb"/>
-            <process ref="employeeResponseProcessor"/>
+            <from id="_from1" uri="cxf:bean:employeeServiceCXF?dataFormat=PAYLOAD"/>
+            <unmarshal id="_unmarshal1" ref="employeeJaxb"/>
+            <process id="_process1" ref="employeeResponseProcessor"/>
         </route>
     </camelContext>
     <bean

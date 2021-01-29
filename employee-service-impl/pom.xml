@@ -31,6 +31,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jaxb</artifactId>
         </dependency>
         <dependency>
@@ -47,8 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf-starter</artifactId>
-            <version>2.23.2.fuse-780036-redhat-00001</version>
+            <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
     <repositories>
@@ -103,9 +106,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>fabric8-maven-plugin</artifactId>
-                <version>4.4.1</version>
+                <groupId>org.eclipse.jkube</groupId>
+                <artifactId>openshift-maven-plugin</artifactId>
+                <version>1.0.2</version>
                 <executions>
                     <execution>
                         <goals>
