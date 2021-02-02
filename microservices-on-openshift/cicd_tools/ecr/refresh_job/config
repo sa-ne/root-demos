@@ -1,8 +1,0 @@
-[default]
-region = eu-west-1
-
-[ecr_dev]
-region = eu-west-1
-
-[ecr_prd]
-region = eu-west-1
